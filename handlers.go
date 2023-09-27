@@ -117,6 +117,14 @@ func createStreamHandler(streamHandlers map[string]StreamHandler, cacheAge time.
 	return createHandler("stream", handlers, []byte("streams"), cacheAge, cachePublic, handleEtag, logger, userDataType, userDataIsBase64)
 }
 
+func createMetaHandler(metaHandlers map[string]MetaHandler, cacheAge time.Duration, cachePublic, handleEtag bool, logger *zap.Logger, userDataType reflect.Type, userDataIsBase64 bool) fiber.Handler {
+	handlers := make(map[string]handler, len(metaHandlers))
+	for k, v := range metaHandlers {
+		handlers[k] = convertMetaHandler(v)
+	}
+	return createHandler("meta", handlers, []byte("meta"), cacheAge, cachePublic, handleEtag, logger, userDataType, userDataIsBase64)
+}
+
 func convertCatalogHandler(h CatalogHandler) handler {
 	return func(ctx context.Context, id string, userData interface{}) (interface{}, error) {
 		return h(ctx, id, userData)
@@ -129,7 +137,13 @@ func convertStreamHandler(h StreamHandler) handler {
 	}
 }
 
-// Common handler (same signature as both catalog and stream handler)
+func convertMetaHandler(h MetaHandler) handler {
+	return func(ctx context.Context, id string, userData interface{}) (interface{}, error) {
+		return h(ctx, id, userData)
+	}
+}
+
+// Common handler (same signature as both catalog, stream and meta handler)
 type handler func(ctx context.Context, id string, userData interface{}) (interface{}, error)
 
 func createHandler(handlerName string, handlers map[string]handler, jsonArrayKey []byte, cacheAge time.Duration, cachePublic, handleEtag bool, logger *zap.Logger, userDataType reflect.Type, userDataIsBase64 bool) fiber.Handler {

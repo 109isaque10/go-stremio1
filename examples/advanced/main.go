@@ -57,6 +57,7 @@ var (
 )
 
 // content is our static web server content.
+//
 //go:embed web/index.html
 var content embed.FS
 
@@ -111,7 +112,7 @@ func main() {
 	}
 
 	// Create addon
-	addon, err := stremio.NewAddon(manifest, nil, streamHandlers, options)
+	addon, err := stremio.NewAddon(manifest, nil, streamHandlers, nil, options)
 	if err != nil {
 		logger.Fatal("Couldn't create new addon", zap.Error(err))
 	}

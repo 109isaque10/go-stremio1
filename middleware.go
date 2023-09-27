@@ -37,7 +37,8 @@ func createLoggingMiddleware(logger *zap.Logger, logIPs, logUserAgent, logMediaN
 
 		// First call the other handlers in the chain!
 		if err := c.Next(); err != nil {
-			logger.Error("Received error from next middleware or handler in logging middleware", zap.Error(err))
+			return err
+			//logger.Error("Received error from next middleware or handler in logging middleware", zap.Error(err))
 		}
 
 		// Then log

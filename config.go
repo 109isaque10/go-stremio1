@@ -64,11 +64,15 @@ type Options struct {
 	CacheAgeCatalogs time.Duration
 	// Same as CacheAgeCatalogs, but for streams.
 	CacheAgeStreams time.Duration
+	// Same as CacheAgeCatalogs, but for meta.
+	CacheAgeMeta time.Duration
 	// Flag for indicating to proxies whether they are allowed to cache responses from the catalog endpoint.
 	// Default false.
 	CachePublicCatalogs bool
 	// Same as CachePublicCatalogs, but for streams.
 	CachePublicStreams bool
+	// Same as CachePublicCatalogs, but for meta.
+	CachePublicMeta bool
 	// Flag for indicating whether the "ETag" header should be set and the "If-None-Match" header checked.
 	// Helps reducing the transferred data volume from the server even further.
 	// Only makes sense when setting a non-zero CacheAgeCatalogs.
@@ -77,6 +81,8 @@ type Options struct {
 	HandleEtagCatalogs bool
 	// Same as HandleEtagCatalogs, but for streams.
 	HandleEtagStreams bool
+	// Same as HandleEtagCatalogs, but for meta.
+	HandleEtagMeta bool
 	// Flag for indicating whether user data is Base64-encoded.
 	// As the user data is in the URL it needs to be the URL-safe Base64 encoding described in RFC 4648.
 	// When true, go-stremio first decodes the value before passing or unmarshalling it.

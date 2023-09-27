@@ -1,5 +1,7 @@
 package stremio
 
+import "time"
+
 // Manifest describes the capabilities of the addon.
 // See https://github.com/Stremio/stremio-addon-sdk/blob/f6f1f2a8b627b9d4f2c62b003b251d98adadbebe/docs/api/responses/manifest.md
 type Manifest struct {
@@ -194,6 +196,38 @@ type MetaPreviewItem struct {
 	IMDbRating  string         `json:"imdbRating,omitempty"`
 	ReleaseInfo string         `json:"releaseInfo,omitempty"` // E.g. "2000" for movies and "2000-2014" or "2000-" for TV shows
 	Description string         `json:"description,omitempty"`
+
+	Background     string          `json:"background,omitempty"` // URL
+	Logo           string          `json:"logo,omitempty"`       // URL
+	Videos         []VideoItem     `json:"videos,omitempty"`
+	Year           string          `json:"year,omitempty"`
+	Writer         []string        `json:"writer,omitempty"`
+	Country        string          `json:"country,omitempty"`
+	Runtime        string          `json:"runtime,omitempty"`
+	TrailerStreams []TrailerStream `json:"trailerStreams,omitempty"`
+	Trailers       []Trailers      `json:"trailers,omitempty"`
+	Slug           string          `json:"slug,omitempty"`
+	Status         string          `json:"status,omitempty"`
+	IMDBId         string          `json:"imdb_id,omitempty"`
+}
+
+type Trailers struct {
+	Source string `json:"source,omitempty"`
+	Type   string `json:"type,omitempty"`
+}
+
+type TrailerStream struct {
+	Title       string `json:"title,omitempty"`
+	YouTubeID   string `json:"ytId,omitempty"`
+	Url         string `json:"url,omitempty"`
+	InfoHash    string `json:"infoHash,omitempty"`
+	FileIndex   int    `json:"fileIdx,omitempty"`
+	ExternalUrl string `json:"externalUrl,omitempty"`
+}
+
+type MetaItemBehaviorHints struct {
+	DefaultVideoID     *string `json:"defaultVideoId"`
+	HasScheduledVideos bool    `json:"hasScheduledVideos,omitempty"`
 }
 
 // MetaItem represents a meta item and is meant to be used when info for a specific item was requested.
@@ -204,26 +238,30 @@ type MetaItem struct {
 	Name string `json:"name"`
 
 	// Optional
-	Genres      []string       `json:"genres,omitempty"`   // Will be replaced by Links at some point
-	Director    []string       `json:"director,omitempty"` // Will be replaced by Links at some point
-	Cast        []string       `json:"cast,omitempty"`     // Will be replaced by Links at some point
-	Links       []MetaLinkItem `json:"links,omitempty"`    // For genres, director, cast and potentially more. Not fully supported by Stremio yet!
-	Poster      string         `json:"poster,omitempty"`   // URL
-	PosterShape string         `json:"posterShape,omitempty"`
-	Background  string         `json:"background,omitempty"` // URL
-	Logo        string         `json:"logo,omitempty"`       // URL
-	Description string         `json:"description,omitempty"`
-	ReleaseInfo string         `json:"releaseInfo,omitempty"` // E.g. "2000" for movies and "2000-2014" or "2000-" for TV shows
-	IMDbRating  string         `json:"imdbRating,omitempty"`
-	Released    string         `json:"released,omitempty"` // Must be ISO 8601, e.g. "2010-12-06T05:00:00.000Z"
-	Videos      []VideoItem    `json:"videos,omitempty"`
-	Runtime     string         `json:"runtime,omitempty"`
-	Language    string         `json:"language,omitempty"`
-	Country     string         `json:"country,omitempty"`
-	Awards      string         `json:"awards,omitempty"`
-	Website     string         `json:"website,omitempty"` // URL
+	Genres         []string        `json:"genres,omitempty"`   // Will be replaced by Links at some point
+	Director       []string        `json:"director,omitempty"` // Will be replaced by Links at some point
+	Cast           []string        `json:"cast,omitempty"`     // Will be replaced by Links at some point
+	Links          []MetaLinkItem  `json:"links,omitempty"`    // For genres, director, cast and potentially more. Not fully supported by Stremio yet!
+	Poster         string          `json:"poster,omitempty"`   // URL
+	PosterShape    string          `json:"posterShape,omitempty"`
+	Background     string          `json:"background,omitempty"` // URL
+	Logo           string          `json:"logo,omitempty"`       // URL
+	Description    string          `json:"description,omitempty"`
+	ReleaseInfo    string          `json:"releaseInfo,omitempty"` // E.g. "2000" for movies and "2000-2014" or "2000-" for TV shows
+	IMDbRating     string          `json:"imdbRating,omitempty"`
+	Released       string          `json:"released,omitempty"` // Must be ISO 8601, e.g. "2010-12-06T05:00:00.000Z"
+	Videos         []VideoItem     `json:"videos,omitempty"`
+	Runtime        string          `json:"runtime,omitempty"`
+	Slug           string          `json:"slug,omitempty"`
+	Status         string          `json:"status,omitempty"`
+	TrailerStreams []TrailerStream `json:"trailerStreams,omitempty"`
+	Language       string          `json:"language,omitempty"`
+	Country        string          `json:"country,omitempty"`
+	Awards         string          `json:"awards,omitempty"`
+	Website        string          `json:"website,omitempty"` // URL
 
 	// TODO: behaviorHints
+	//BehaviorHints MetaItemBehaviorHints `json:"behaviorHints,omitempty"`
 }
 
 // MetaLinkItem links to a page within Stremio.
@@ -236,22 +274,47 @@ type MetaLinkItem struct {
 }
 
 type VideoItem struct {
-	ID       string `json:"id"`
-	Title    string `json:"title"`
-	Released string `json:"released"` // Must be ISO 8601, e.g. "2010-12-06T05:00:00.000Z"
+	ID       string    `json:"id"`
+	Name     string    `json:"name"`
+	Released time.Time `json:"released"` // Must be ISO 8601, e.g. "2010-12-06T05:00:00.000Z"
+
+	Number      int       `json:"number,omitempty"`
+	Description string    `json:"description,omitempty"`
+	FirstAired  time.Time `json:"firstAired,omitempty"`
 
 	// Optional
 	Thumbnail string       `json:"thumbnail,omitempty"` // URL
 	Streams   []StreamItem `json:"streams,omitempty"`
 	Available bool         `json:"available,omitempty"`
-	Episode   string       `json:"episode,omitempty"`
-	Season    string       `json:"season,omitempty"`
+	Episode   int          `json:"episode,omitempty"`
+	Season    int          `json:"season,omitempty"`
 	Trailer   string       `json:"trailer,omitempty"` // Youtube ID
 	Overview  string       `json:"overview,omitempty"`
+
+	// TO DELETE:
+	Rating string `json:"rating,omitempty"`
+	TvdbId int    `json:"tvdb_id,omitempty"`
+}
+
+type Subtitles struct {
+	Id       string `json:"id,omitempty"`
+	URL      string `json:"url,omitempty"`
+	Language string `json:"language,omitempty"`
+}
+
+type ProxyHeaders struct {
+	Request map[string]string `json:"request,omitempty"`
+}
+
+type StreamItemBehaviorHints struct {
+	CountryWhitelist string       `json:"countryWhitelist,omitempty"`
+	NotWebReady      bool         `json:"notWebReady,omitempty"`
+	BingeGroup       string       `json:"bingeGroup,omitempty"`
+	ProxyHeaders     ProxyHeaders `json:"proxyHeaders,omitempty"`
 }
 
 // StreamItem represents a stream for a MetaItem.
-// See https://github.com/Stremio/stremio-addon-sdk/blob/f6f1f2a8b627b9d4f2c62b003b251d98adadbebe/docs/api/responses/stream.md
+// See https://github.com/Stremio/stremio-addon-sdk/blob/d1915074439bf152c0c0f1a7603ccf93c05a1f89/docs/api/responses/stream.md
 type StreamItem struct {
 	// One of the following is required
 	URL         string `json:"url,omitempty"` // URL
@@ -260,9 +323,12 @@ type StreamItem struct {
 	ExternalURL string `json:"externalUrl,omitempty"` // URL
 
 	// Optional
-	Title     string `json:"title,omitempty"`   // Usually used for stream quality
-	FileIndex uint8  `json:"fileIdx,omitempty"` // Only when using InfoHash
+	Name        string      `json:"name,omitempty"`  // Usually used for stream quality
+	Title       string      `json:"title,omitempty"` // NOTE: Soon to be deprecated in favor of description
+	Description string      `json:"description,omitempty"`
+	FileIndex   uint8       `json:"fileIdx,omitempty"` // Only when using InfoHash
+	Subtitles   []Subtitles `json:"subtitles,omitempty"`
 
 	// TODO: subtitles
-	// TODO: behaviorHints
+	BehaviorHints *StreamItemBehaviorHints `json:"behaviorHints,omitempty"`
 }
