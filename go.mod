@@ -1,5 +1,4 @@
-module github.com/deflix-tv/go-stremio
-replace github.com/deflix-tv/go-stremio => github.com/109isaque10/go-stremio1 master
+module github.com/109isaque10/go-stremio1
 
 go 1.16
 
