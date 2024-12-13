@@ -1,4 +1,4 @@
-module github.com/deflix-tv/go-stremio
+module github.com/109isaque10/go-stremio1
 
 go 1.16
 
